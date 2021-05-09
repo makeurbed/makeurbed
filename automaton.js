@@ -85,14 +85,14 @@ tloader.load("img/star.png", function(texture){
     starMaterial.side = THREE.DoubleSide;
     for(let p=0; p<30; p++) {
         let star = new THREE.Mesh(starGeo, starMaterial);
-        cloud.position.set(
+        star.position.set(
         Math.random()*10-10, 
         Math.random()*10-4, //up
         -p -3 //forward
         );
         star.rotation.z = Math.random()*2*Math.PI;
         star.material.opacity = 0.35;
-        scene.add(cloud);
+        scene.add(star);
     }
 
 });
