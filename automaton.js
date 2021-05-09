@@ -4,10 +4,8 @@ import { OrbitControls } from '/threejs/examples/js/controls/OrbitControls.js';
 import { EffectComposer } from '/threejs/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from '/threejs/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from '/threejs/examples/jsm/postprocessing/UnrealBloomPass.js'; 
-import { FilmPass } from '/threejs/examples/jsm/postprocessing/FilmPass.js';
 let scene, camera, renderer, composer;
 let frame;
-let objects = [];
 
 
 function init() {
@@ -31,93 +29,91 @@ function init() {
      camera.position.z += 4;
     //controls.update();
 
-/**
- * MATERIALS
-*/
-var cubemap = new THREE.CubeTextureLoader()
-.setPath( 'img/' )
-.load( [
-    'mecube.png',
-    'mecube.png',
-    'mecube.png',
-    'mecube.png',
-    'mecube.png',
-    'mecube.png'
-] );
+    /**
+     * MATERIALS
+    */
+    var cubemap = new THREE.CubeTextureLoader()
+    .setPath( 'img/' )
+    .load( [
+        'mecube.png',
+        'mecube.png',
+        'mecube.png',
+        'mecube.png',
+        'mecube.png',
+        'mecube.png'
+    ] );
 
-//material
-var morphMaterial = new THREE.MeshStandardMaterial( { //material to for disco ball
-    metalness: 1,
-    roughness: 0.2,
-    color: 0xFFFFFF,
-    envMap: cubemap,
-    morphTargets: true,
-    morphNormals:true,
-} );
-morphMaterial.side = THREE.DoubleSide;
+    var morphMaterial = new THREE.MeshStandardMaterial( { //material to for disco ball
+        metalness: 1,
+        roughness: 0.2,
+        color: 0xFFFFFF,
+        envMap: cubemap,
+        morphTargets: true,
+        morphNormals:true,
+    } );
+    morphMaterial.side = THREE.DoubleSide;
 
 
-var loader = new GLTFLoader();
-loader.load( 'models/diorama.gltf', function ( gltf ) {  
-    frame = gltf.scene.getObjectByName("frame2");
-    console.log(frame);
-    frame.material = morphMaterial;
-    frame.geometry.morphTargets = true;
-         
-    gltf.scene.traverse(function (child) {
-        if (child.isMesh) {
-            child.material.envMap = cubemap;
-            objects.push(child);
+    var loader = new GLTFLoader();
+    loader.load( 'models/diorama.gltf', function ( gltf ) {  
+        frame = gltf.scene.getObjectByName("frame2");
+        console.log(frame);
+        frame.material = morphMaterial;
+        frame.geometry.morphTargets = true;
+            
+        gltf.scene.traverse(function (child) {
+            if (child.isMesh) {
+                child.material.envMap = cubemap;
+            }
+        });
+        scene.add(gltf.scene);
+    }, undefined, function ( error ) {
+    console.error( error );
+    } );
+
+    let tloader = new THREE.TextureLoader();
+    tloader.load("img/star.png", function(texture){
+        const starGeo = new THREE.PlaneBufferGeometry(5,5);
+        const starMaterial = new THREE.MeshLambertMaterial({
+            map:texture,
+            transparent: true
+        });
+        starMaterial.side = THREE.DoubleSide;
+
+        for(let p=0; p<30; p++) {
+            let star = new THREE.Mesh(starGeo, starMaterial);
+            star.position.set(
+            Math.random()*10-10, 
+            Math.random()*10-4, //up
+            -p -3 //forward
+            );
+            star.rotation.z = Math.random()*2*Math.PI;
+            star.material.opacity = 0.35;
+            scene.add(star);
         }
+
     });
-    scene.add(gltf.scene);
-}, undefined, function ( error ) {
-console.error( error );
-} );
-
-let tloader = new THREE.TextureLoader();
-tloader.load("img/star.png", function(texture){
-    const starGeo = new THREE.PlaneBufferGeometry(5,5);
-    const starMaterial = new THREE.MeshLambertMaterial({
-        map:texture,
-        transparent: true
-    });
-    starMaterial.side = THREE.DoubleSide;
-    for(let p=0; p<30; p++) {
-        let star = new THREE.Mesh(starGeo, starMaterial);
-        star.position.set(
-        Math.random()*10-10, 
-        Math.random()*10-4, //up
-        -p -3 //forward
-        );
-        star.rotation.z = Math.random()*2*Math.PI;
-        star.material.opacity = 0.35;
-        scene.add(star);
-    }
-
-});
 
 
 
-/**
-* Post Processing
-**/
-composer = new EffectComposer( renderer );
-const renderPass = new RenderPass( scene, camera );
-composer.addPass( renderPass );
+    /**
+    * Post Processing
+    **/
+    composer = new EffectComposer( renderer );
+    const renderPass = new RenderPass( scene, camera );
+    composer.addPass( renderPass );
 
-const unrealBloomPass = new UnrealBloomPass();
-composer.addPass( unrealBloomPass );
-render();
-
+    const unrealBloomPass = new UnrealBloomPass();
+    composer.addPass( unrealBloomPass );
 }
 
 function render() {
-    composer.render(); //render and post
     requestAnimationFrame(render);
+    composer.render(); //render and post
 }
 
 init();
+render();
 
 
 
@@ -129,7 +125,7 @@ window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize(){
     camera.aspect = window.innerWidth / 2 / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth/2, window.innerHeight);
+    renderer.setSize( window.innerWidth / 2, window.innerHeight);
 }
 
 
