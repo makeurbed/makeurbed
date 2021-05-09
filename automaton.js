@@ -6,7 +6,7 @@ import { RenderPass } from '/threejs/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from '/threejs/examples/jsm/postprocessing/UnrealBloomPass.js'; 
 import { FilmPass } from '/threejs/examples/jsm/postprocessing/FilmPass.js';
 let scene, camera, renderer, composer;
-
+let frame;
 let objects = [];
 
 
@@ -45,24 +45,32 @@ var cubemap = new THREE.CubeTextureLoader()
     'mecube.png'
 ] );
 
-var wallMaterial = new THREE.MeshStandardMaterial( { //material to for disco ball
+//material
+var morphMaterial = new THREE.MeshStandardMaterial( { //material to for disco ball
     metalness: 1,
-    roughness: 0.5,
-    color: 0x4ba353,
+    roughness: 0.2,
+    color: 0xFFFFFF,
     envMap: cubemap,
-    emissive: true
+    morphTargets: true,
+    morphNormals:true,
 } );
-wallMaterial.side = THREE.DoubleSide;
+morphMaterial.side = THREE.DoubleSide;
+
 
 var loader = new GLTFLoader();
-loader.load( 'models/diorama.gltf', function ( gltf ) {           
-gltf.scene.traverse(function (child) {
-    if (child.isMesh) {
-        child.material.envMap = cubemap;
-        objects.push(child);
-    }
-});
-scene.add(gltf.scene);
+loader.load( 'models/diorama.gltf', function ( gltf ) {  
+    frame = gltf.scene.getObjectByName("frame2");
+    console.log(frame);
+    frame.material = morphMaterial;
+    frame.geometry.morphTargets = true;
+         
+    gltf.scene.traverse(function (child) {
+        if (child.isMesh) {
+            child.material.envMap = cubemap;
+            objects.push(child);
+        }
+    });
+    scene.add(gltf.scene);
 }, undefined, function ( error ) {
 console.error( error );
 } );
@@ -153,9 +161,18 @@ function onWindowResize(){
                 else if (camera.position.z >0){
                     camera.position.z -= 0.01; 
                 }
+                else if (frame.morphTargetInfluences[0]<1){
+                    frame.morphTargetInfluences[0] += 0.01;
+                }
 			 }
             else{
-                if (camera.position.y > 0){
+                if (camera.position.z <  4){
+                    camera.position.z += 0.01; 
+                    if(frame.morphTargetInfluences[0]>0){
+                        frame.morphTargetInfluences[0] -= 0.01;
+                    }
+                }
+                else if (camera.position.y > 0){
                     camera.position.y -= 0.01;       
                 }
             }
