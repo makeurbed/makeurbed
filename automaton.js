@@ -7,8 +7,25 @@ import { UnrealBloomPass } from '/threejs/examples/jsm/postprocessing/UnrealBloo
 let scene, camera, renderer, composer;
 let frame;
 
+const loadingScreen = document.getElementById( 'loading-screen' );
 
 function init() {
+
+    //loader
+
+    let manager = new THREE.LoadingManager();
+    manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+        console.log( 'Loaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    };
+    manager.onLoad = function () {
+        console.log('all items loaded');
+        loadingScreen.classList.add( 'fade-out' );
+        loadingScreen.remove();
+    };
+    manager.onError = function () {
+        console.log('there has been an error');
+    }
+
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
 
@@ -20,7 +37,7 @@ function init() {
     const container = document.getElementById( 'three' );
     document.body.appendChild( container );
     renderer = new THREE.WebGLRenderer({ antialias: true});
-    renderer.setPixelRatio(window.devicePixelRatio/2);
+    renderer.setPixelRatio(window.devicePixelRatio/1.5);
     renderer.setSize(window.innerWidth/2,window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);         
     
@@ -54,7 +71,7 @@ function init() {
     morphMaterial.side = THREE.DoubleSide;
 
 
-    var loader = new GLTFLoader();
+    var loader = new GLTFLoader(manager);
     loader.load( 'models/diorama.gltf', function ( gltf ) {  
         frame = gltf.scene.getObjectByName("frame2");
         console.log(frame);
@@ -146,30 +163,30 @@ function onWindowResize(){
 // 	}
 //   }
 
-  container.addEventListener( 'wheel', onMouseWheel );
-  container.addEventListener( 'scroll', onMouseWheel );
-        function onMouseWheel( ev ) {
-            ev.preventDefault();
-            if (ev.deltaY<0){
-                if (camera.position.y < 2.8){
-                    camera.position.y += 0.01; 
-                }
-                else if (camera.position.z >0){
-                    camera.position.z -= 0.01; 
-                }
-                else if (frame.morphTargetInfluences[0]<1){
-                    frame.morphTargetInfluences[0] += 0.01;
-                }
-			 }
-            else{
-                if (camera.position.z <  4){
-                    camera.position.z += 0.01; 
-                    if(frame.morphTargetInfluences[0]>0){
-                        frame.morphTargetInfluences[0] -= 0.01;
-                    }
-                }
-                else if (camera.position.y > 0){
-                    camera.position.y -= 0.01;       
-                }
+container.addEventListener( 'wheel', onMouseWheel );
+container.addEventListener( 'scroll', onMouseWheel );
+function onMouseWheel( ev ) {
+    ev.preventDefault();
+    if (ev.deltaY<0){
+        if (camera.position.y < 2.8){
+            camera.position.y += 0.01; 
+        }
+        else if (camera.position.z >0){
+            camera.position.z -= 0.01; 
+        }
+        else if (frame.morphTargetInfluences[0]<1){
+            frame.morphTargetInfluences[0] += 0.01;
+        }
+        }
+    else{
+        if (camera.position.z <  4){
+            camera.position.z += 0.01; 
+            if(frame.morphTargetInfluences[0]>0){
+                frame.morphTargetInfluences[0] -= 0.01;
             }
         }
+        else if (camera.position.y > 0){
+            camera.position.y -= 0.01;       
+        }
+    }
+}
