@@ -109,6 +109,7 @@
                 utime: { value: 0.0 },
                 width: { value: 2.0 },
                 height: { value: 1.5 },
+                mouse: {value: new THREE.Vector2()},
 				uTexture: { value: new THREE.TextureLoader().load("img/nhs.png") },
                 },
                 vertexShader: vertexShader(),
@@ -206,21 +207,8 @@
 
         window.addEventListener( 'mousemove', onMouseMove, false );        
         function onMouseMove(event){
-            const amount = event.deltaX;
-            if(amount>0){}
-            if(frame.morphTargetInfluences[0]<1){
-					frame.morphTargetInfluences[0] += 0.01;
-			}
-            else if(frame1.morphTargetInfluences[0]<1){
-					frame1.morphTargetInfluences[0] += 0.01;
-			}
-            else if(frame2.morphTargetInfluences[0]<1){
-					frame2.morphTargetInfluences[0] += 0.01;
-			}
-            else if(computer.morphTargetInfluences[0]<1){
-					computer.morphTargetInfluences[0] += 0.005;
-			}
-                  
+            uniforms.mouse.value.x = e.pageX / window.innerWidth;
+            uniforms.mouse.value.y = e.pageY / window.innerHeight;      
         }
 		</script>
 		</div>

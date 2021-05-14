@@ -4,8 +4,8 @@ import { OrbitControls } from '/threejs/examples/js/controls/OrbitControls.js';
 import { EffectComposer } from '/threejs/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from '/threejs/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from '/threejs/examples/jsm/postprocessing/UnrealBloomPass.js'; 
-let scene, camera, renderer, composer;
-let frame;
+let scene, camera, renderer, composer, material;
+let frame, frame3, frame2, disco;
 
 const loadingScreen = document.getElementById( 'loading-screen' );
 
@@ -41,8 +41,8 @@ function init() {
     renderer.setSize(window.innerWidth/2,window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);         
     
-    // const controls = new OrbitControls( camera, renderer.domElement );
-    // controls.enableZoom = false;
+    //const controls = new OrbitControls( camera, renderer.domElement );
+    //controls.enableZoom = false;
      camera.position.z += 4;
     //controls.update();
 
@@ -72,11 +72,20 @@ function init() {
 
 
     var loader = new GLTFLoader(manager);
-    loader.load( 'models/diorama.gltf', function ( gltf ) {  
+    loader.load( 'models/zine.gltf', function ( gltf ) {  
         frame = gltf.scene.getObjectByName("frame2");
-        console.log(frame);
         frame.material = morphMaterial;
         frame.geometry.morphTargets = true;
+
+        frame3 = gltf.scene.getObjectByName("frame4");
+        frame3.material = morphMaterial;
+        frame3.geometry.morphTargets = true;
+
+        disco = gltf.scene.getObjectByName("disco");
+
+        frame2 = gltf.scene.getObjectByName("frame3");
+        frame2.material = morphMaterial;
+        frame2.geometry.morphTargets = true;
             
         gltf.scene.traverse(function (child) {
             if (child.isMesh) {
@@ -111,6 +120,68 @@ function init() {
 
     });
 
+    let geometry = new THREE.PlaneGeometry(2, 1.5, 30, 30); //
+    material = new THREE.ShaderMaterial({
+                uniforms: {
+                utime: { value: 0.0 },
+                width: { value: 2.0 },
+                height: { value: 1.5 },
+				uTexture: { value: new THREE.TextureLoader().load("img/mecube.png") },
+                },
+                vertexShader: vertexShader(),
+                fragmentShader: clearShader(),
+                });
+    material.transparent = true;
+
+
+    let mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    mesh.position.set(-0,-0,0.08);
+    function vertexShader() {
+        return `
+        uniform float utime;
+        uniform float width;
+        uniform float height;
+
+        varying vec3 Normal;
+        varying vec2 vUv; //x and y unit vector
+        varying float zpos; //this will be z position after transformation
+
+
+        
+        void main(){
+        vUv = uv;   //for use in frag
+
+        float dx = 2. - uv.x + width;   
+        float dy = 8. -uv.y * height;
+        float freq = sqrt(dx*dx + dy*dy);
+        float amp = 0.2;
+        float angle = -utime*3.0+freq*8.0;
+            
+        zpos = sin(angle)*amp;
+
+        vec3 local3 = vec3(uv.x*width, uv.y*height, zpos);
+        
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
+        }
+        `
+    }
+    function clearShader() {
+    return `
+        uniform float utime;
+        uniform sampler2D uTexture;
+        varying vec2 vUv;
+        varying float zpos;
+       
+        void main() {
+            vec3 texture = texture2D(uTexture, vUv + zpos).rgb;
+            float shadow = clamp(zpos / 1., 0., 1.);
+            gl_FragColor = vec4(texture + shadow, 0.1);
+            gl_FragColor.a = 0.2;
+        }
+    `
+    }
+
 
 
     /**
@@ -127,6 +198,8 @@ function init() {
 function render() {
     requestAnimationFrame(render);
     composer.render(); //render and post
+    material.uniforms.utime.value +=0.007; 
+   // disco.rotation.y += 0.005;                
 }
 
 init();
@@ -162,31 +235,66 @@ function onWindowResize(){
 //       console.log("Intersected object", obj);
 // 	}
 //   }
-
+// var directionX = 0;
+// var directionY = 0;
+// container.addEventListener( 'mousemove', onMouseMove );
+// function onMouseMove(event){
+//     directionX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+//     directionY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+//     console.log(directionX);
+//     if(directionX > 0){
+//         camera.rotation.y += 0.001;
+//     }else{
+//         camera.rotation.y -= 0.001;
+//     }
+// }
+const speed = 0.02;
 container.addEventListener( 'wheel', onMouseWheel );
 container.addEventListener( 'scroll', onMouseWheel );
 function onMouseWheel( ev ) {
     ev.preventDefault();
     if (ev.deltaY<0){
-        if (camera.position.y < 2.8){
-            camera.position.y += 0.01; 
+        if (camera.position.z < 4 && camera.position.y <0){
+            camera.position.z += speed; 
+            console.log("1");
         }
-        else if (camera.position.z >0){
-            camera.position.z -= 0.01; 
+        else if (camera.position.y < 2.8){
+            camera.position.y += speed; 
+            disco.rotation.y += 0.005; 
+            if(frame3.morphTargetInfluences[0]>0){
+                frame3.morphTargetInfluences[0] -= 0.01;
+            }  
+            
+        }
+        else if (camera.position.z >0.75){
+            camera.position.z -= speed; 
         }
         else if (frame.morphTargetInfluences[0]<1){
-            frame.morphTargetInfluences[0] += 0.01;
+            frame.morphTargetInfluences[0] += 0.02;
+        }
+        else if (frame2.morphTargetInfluences[0]<1){
+            frame2.morphTargetInfluences[0] += 0.02;
         }
         }
     else{
-        if (camera.position.z <  4){
-            camera.position.z += 0.01; 
+        if (camera.position.z < 4 && camera.position.y > 2){
+            camera.position.z += speed; 
             if(frame.morphTargetInfluences[0]>0){
                 frame.morphTargetInfluences[0] -= 0.01;
             }
+            if(frame2.morphTargetInfluences[0]>0){
+                frame2.morphTargetInfluences[0] -= 0.01;
+            }
         }
-        else if (camera.position.y > 0){
-            camera.position.y -= 0.01;       
+        else if (camera.position.y > -3){
+            camera.position.y -= speed;
+            disco.rotation.y += 0.005; 
+            if(frame3.morphTargetInfluences[0]<1){
+                frame3.morphTargetInfluences[0] += 0.01;
+            }
+        }
+        else if (camera.position.z >0.75){
+            camera.position.z -= speed; 
         }
     }
 }
