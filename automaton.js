@@ -249,11 +249,37 @@ function onWindowResize(){
 //     }
 // }
 const speed = 0.02;
+// to run on each frame
+function lerp(position, targetPosition) {
+    // update position by 20% of the distance between position and target position
+      position.x += (targetPosition.x - position.x)*0.2;
+      position.y += (targetPosition.y - position.y)*0.2;
+}
 container.addEventListener( 'wheel', onMouseWheel );
-container.addEventListener('touchmove', onMouseWheel);
+
+/**
+ * MOBILE CONTROLS
+ *  */
+container.addEventListener("touchstart", touchStart, false);
+container.addEventListener("touchmove", touchMove, false);
+
+var start = {x:0, y:0};
+function touchStart(event) {
+  start.x = event.touches[0].pageX;
+  start.y = event.touches[0].pageY;
+}
+
+function touchMove(event) {
+  offset = {};
+  offset.x = start.x - event.touches[0].pageX;
+  offset.y = start.y - event.touches[0].pageY;
+  onMouseWheel(ev);
+}
+
 container.addEventListener( 'scroll', onMouseWheel );
 function onMouseWheel( ev ) {
     ev.preventDefault();
+    console.log(ev.deltaY);
     if (ev.deltaY<0){
         if (camera.position.z < 4 && camera.position.y <0){
             camera.position.z += speed; 
