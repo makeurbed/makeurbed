@@ -250,6 +250,7 @@ function onWindowResize(){
 // }
 const speed = 0.02;
 container.addEventListener( 'wheel', onMouseWheel );
+container.addEventListener('touchmove', onMouseWheel);
 container.addEventListener( 'scroll', onMouseWheel );
 function onMouseWheel( ev ) {
     ev.preventDefault();
