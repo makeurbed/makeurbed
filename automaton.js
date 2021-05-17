@@ -262,7 +262,6 @@ container.addEventListener( 'wheel', onMouseWheel );
  *  */
 container.addEventListener("touchstart", touchStart, false);
 container.addEventListener("touchmove", touchMove, false);
-
 var start = {x:0, y:0};
 function touchStart(event) {
   start.x = event.touches[0].pageX;
@@ -273,7 +272,7 @@ function touchMove(event) {
   offset = {};
   offset.x = start.x - event.touches[0].pageX;
   offset.y = start.y - event.touches[0].pageY;
-  onMouseWheel(ev);
+  onMouseWheel(offset);
 }
 
 container.addEventListener( 'scroll', onMouseWheel );
