@@ -216,6 +216,7 @@ function onWindowResize(){
     camera.aspect = window.innerWidth / 2 / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth / 2, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio/1.5);
 }
 
 
@@ -250,11 +251,6 @@ function onWindowResize(){
 // }
 const speed = 0.02;
 // to run on each frame
-function lerp(position, targetPosition) {
-    // update position by 20% of the distance between position and target position
-      position.x += (targetPosition.x - position.x)*0.2;
-      position.y += (targetPosition.y - position.y)*0.2;
-}
 container.addEventListener( 'wheel', onMouseWheel );
 
 /**

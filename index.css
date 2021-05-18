@@ -2,7 +2,7 @@ body {
   font-family: 'Montserrat', sans-serif;  
   color: #ffffff;
   margin: 0px auto;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
 }
 
 p{
@@ -13,6 +13,11 @@ p{
 p.thicker {
   font-weight: 400;
   font-size: 2vw;
+}
+
+p.menu {
+  font-weight: 400;
+  font-size: 5vw;
 }
 
 a {
@@ -81,6 +86,16 @@ img{
   overflow-x: hidden;
   font-size: 2vw;
   background-color: #000000;
+}
+
+.section{
+  width: 96%;
+  margin-left: 2%;
+  margin-right: 2%;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+
 }
 
 .three{

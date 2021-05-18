@@ -1,0 +1,129 @@
+body {
+    font-family: 'Montserrat', sans-serif;  
+    color: #ffffff;
+    margin: 0px auto;
+    background-color: rgb(0, 0, 0);
+  }
+  
+  p{
+    font-weight: 100;
+    font-size: 1.5vw;
+  }
+  
+  p.thicker {
+    font-weight: 400;
+    font-size: 2vw;
+  }
+  
+  p.menu {
+    font-weight: 400;
+    font-size: 5vw;
+    color:rgb(255, 255, 255)
+  }
+  
+  a {
+    text-decoration: underline;
+    color: #3e438f;
+  }
+  
+  .header{
+    position: fixed;
+    color: #000000;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    font-size: 2vw;
+    padding: 0.5%;
+    z-index: 2;
+    width:100%;
+  }
+  
+  /* Links inside the navbar */
+  .header a {
+    float: left;
+    color: #000000;
+    text-align: left;
+    text-decoration: none;
+    padding: 0px 20px;
+  }
+  
+  .split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    margin-top: 2%;
+    overflow-x: hidden;
+  }
+  
+  /* Control the left side */
+  .left {
+    left: 0;
+    background-color: rgb(0, 0, 0);
+  }
+  
+  /* Control the right side */
+  .right {
+    right: 0;
+    background-color: rgb(0, 0, 0);
+  }
+  
+  img{
+    position: relative;
+    text-align: center;
+    padding: 2%;
+    margin-top: 2%;
+  }
+  
+  .content{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    padding-top: 4%;
+    padding-left: 5%;
+    padding-right: 10%;
+    overflow-x: hidden;
+    font-size: 2vw;
+    background-color: #000000;
+  }
+  
+  .section{
+    width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
+    z-index: 1;
+    top: 0;
+    position: absolute;
+    overflow-x: hidden;
+  
+  }
+  
+  .three{
+    opacity: 1;
+    width: 100%;
+  
+  }
+  
+  #loading-screen {
+      position: absolute;
+    display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+      z-index: 2;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      opacity: 1;
+       transition: 2s opacity;
+     
+  }
+  
+  #loading-screen.fade-out {
+    opacity: 0;
+    justify-content: center;
+  }
+  
