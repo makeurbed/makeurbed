@@ -32,13 +32,13 @@ function init() {
     const light = new THREE.HemisphereLight( 0x333333, 0x333333, 3 );
     scene.add( light );
 
-    camera = new THREE.PerspectiveCamera(60,window.innerWidth/2 / window.innerHeight,1,1000);
+    camera = new THREE.PerspectiveCamera(60,window.innerWidth / window.innerHeight,1,1000);
     
     const container = document.getElementById( 'three' );
     document.body.appendChild( container );
     renderer = new THREE.WebGLRenderer({ antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio/1.5);
-    renderer.setSize(window.innerWidth/2,window.innerHeight );
+    renderer.setSize(window.innerWidth,window.innerHeight );
     document.getElementById('container').appendChild(renderer.domElement);         
     
     //const controls = new OrbitControls( camera, renderer.domElement );
@@ -213,9 +213,9 @@ render();
 
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize(){
-    camera.aspect = window.innerWidth / 2 / window.innerHeight;
+    camera.aspect = window.innerWidth  / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth / 2, window.innerHeight);
+    renderer.setSize( window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio/1.5);
 }
 
@@ -288,7 +288,7 @@ function onMouseWheel( ev ) {
             }  
             
         }
-        else if (camera.position.z >0.75){
+        else if (camera.position.z >1.5){
             camera.position.z -= speed; 
         }
         else if (frame.morphTargetInfluences[0]<1){
@@ -315,7 +315,7 @@ function onMouseWheel( ev ) {
                 frame3.morphTargetInfluences[0] += 0.01;
             }
         }
-        else if (camera.position.z >0.75){
+        else if (camera.position.z >1.5){
             camera.position.z -= speed; 
         }
     }

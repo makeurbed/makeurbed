@@ -255,15 +255,13 @@ import { FilmPass } from '/threejs/examples/jsm/postprocessing/FilmPass.js';
 				renderer.setSize( window.innerWidth, window.innerHeight);
 		}
 
-		window.addEventListener( 'touchmove', onMouseWheel );
 		window.addEventListener( 'scroll', onMouseWheel );
-		window.addEventListener( 'onMouseWheel', onMouseWheel );
-		window.addEventListener( 'wheel', onMouseWheel );
+		window.addEventListener( 'wheel', onMouseWheel ,{ passive: false });
         
         function onMouseWheel( ev ) {
             ev.preventDefault();
             const amount = ev.deltaY;
-            if (amount>0){
+            if (amount<0){
 				if (camera.position.y <HIGHESTHEIGHT){
 					camera.position.y += YSPEED;
 				}
