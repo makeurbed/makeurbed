@@ -123,7 +123,6 @@ function init() {
         uniform float width;
         uniform float height;
 
-        varying vec3 Normal;
         varying vec2 vUv; //x and y unit vector
         varying float zpos; //this will be z position after transformation
 
@@ -236,28 +235,15 @@ container.addEventListener( 'wheel', onMouseWheel );
 /**
  * MOBILE CONTROLS
  *  */
-container.addEventListener("touchstart", touchStart, false);
-container.addEventListener("touchmove", touchMove, false);
-var start = {x:0, y:0};
-function touchStart(event) {
-  start.x = event.touches[0].pageX;
-  start.y = event.touches[0].pageY;
-}
+container.addEventListener("touchmove", onMouseWheel, false);
 
-function touchMove(event) {
-  offset = {};
-  offset.x = start.x - event.touches[0].pageX;
-  offset.y = start.y - event.touches[0].pageY;
-  onMouseWheel(offset);
-}
 const ZBOUND_TOP = 20;
 const ZBOUND_BOTTOM = 3;
 const YBOUND_TOP = 3;
 const YBOUND_BOTTOM = 0;
-container.addEventListener( 'scroll', onMouseWheel );
+container.addEventListener( 'scroll', onMouseWheel,  );
 function onMouseWheel( ev ) {
     ev.preventDefault();
-    console.log(ev.deltaY);
     if (ev.deltaY<0){
         if (camera.position.z >ZBOUND_BOTTOM){
             camera.position.z -= speed; 
