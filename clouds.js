@@ -168,16 +168,23 @@ function init() {
     * Post Processing
     **/
    
-
+let amt = 0.001
 function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
-    material.uniforms.utime.value += 0.001;           
+    material.uniforms.utime.value += amt; 
+    if (amt >  0.001){
+        amt = amt - 0.0001;
+    }          
 }
 
 init();
 render();
 
+
+function lerp (start, end, amt){
+  return (1-amt)*start+amt*end
+}
 
 
 /**
@@ -193,6 +200,6 @@ window.addEventListener( 'resize', onWindowResize, false );
      renderer.setSize( window.innerWidth, window.innerHeight);
 }
 window.addEventListener("mousemove", onMouseMove, false);
-function onMouseMove(){
-    material.uniforms.utime.value += 0.007;           
+function onMouseMove(event){
+    amt = 0.009;           
 }

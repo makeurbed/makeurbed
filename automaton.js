@@ -43,7 +43,9 @@ function init() {
     
     //const controls = new OrbitControls( camera, renderer.domElement );
     //controls.enableZoom = false;
-     camera.position.z += 4;
+     camera.position.z += 9;
+     camera.position.y += 2;
+
     //controls.update();
 
     /**
@@ -72,16 +74,16 @@ function init() {
 
 
     var loader = new GLTFLoader(manager);
-    loader.load( 'models/zine.gltf', function ( gltf ) {  
+    loader.load( 'models/home2.gltf', function ( gltf ) {  
         frame = gltf.scene.getObjectByName("frame2");
         frame.material = morphMaterial;
         frame.geometry.morphTargets = true;
 
-        frame3 = gltf.scene.getObjectByName("frame4");
+        frame3 = gltf.scene.getObjectByName("1frame");
         frame3.material = morphMaterial;
         frame3.geometry.morphTargets = true;
 
-        disco = gltf.scene.getObjectByName("disco");
+        disco = gltf.scene.getObjectByName("Sphere");
 
         frame2 = gltf.scene.getObjectByName("frame3");
         frame2.material = morphMaterial;
@@ -97,28 +99,6 @@ function init() {
     console.error( error );
     } );
 
-    let tloader = new THREE.TextureLoader();
-    tloader.load("img/star.png", function(texture){
-        const starGeo = new THREE.PlaneBufferGeometry(5,5);
-        const starMaterial = new THREE.MeshLambertMaterial({
-            map:texture,
-            transparent: true
-        });
-        starMaterial.side = THREE.DoubleSide;
-
-        for(let p=0; p<30; p++) {
-            let star = new THREE.Mesh(starGeo, starMaterial);
-            star.position.set(
-            Math.random()*10-10, 
-            Math.random()*10-4, //up
-            -p -3 //forward
-            );
-            star.rotation.z = Math.random()*2*Math.PI;
-            star.material.opacity = 0.35;
-            scene.add(star);
-        }
-
-    });
 
     let geometry = new THREE.PlaneGeometry(2, 1.5, 30, 30); //
     material = new THREE.ShaderMaterial({
@@ -249,7 +229,7 @@ function onWindowResize(){
 //         camera.rotation.y -= 0.001;
 //     }
 // }
-const speed = 0.02;
+const speed = 0.03;
 // to run on each frame
 container.addEventListener( 'wheel', onMouseWheel );
 
@@ -270,53 +250,52 @@ function touchMove(event) {
   offset.y = start.y - event.touches[0].pageY;
   onMouseWheel(offset);
 }
-
+const ZBOUND_TOP = 20;
+const ZBOUND_BOTTOM = 3;
+const YBOUND_TOP = 3;
+const YBOUND_BOTTOM = 0;
 container.addEventListener( 'scroll', onMouseWheel );
 function onMouseWheel( ev ) {
     ev.preventDefault();
     console.log(ev.deltaY);
     if (ev.deltaY<0){
-        if (camera.position.z < 4 && camera.position.y <0){
-            camera.position.z += speed; 
-            console.log("1");
-        }
-        else if (camera.position.y < 2.8){
-            camera.position.y += speed; 
-            disco.rotation.y += 0.005; 
-            if(frame3.morphTargetInfluences[0]>0){
-                frame3.morphTargetInfluences[0] -= 0.01;
-            }  
-            
-        }
-        else if (camera.position.z >1.5){
+        if (camera.position.z >ZBOUND_BOTTOM){
             camera.position.z -= speed; 
-        }
-        else if (frame.morphTargetInfluences[0]<1){
-            frame.morphTargetInfluences[0] += 0.02;
-        }
-        else if (frame2.morphTargetInfluences[0]<1){
-            frame2.morphTargetInfluences[0] += 0.02;
-        }
-        }
-    else{
-        if (camera.position.z < 4 && camera.position.y > 2){
-            camera.position.z += speed; 
+            if (camera.position.y < YBOUND_TOP){
+                camera.position.y += speed; 
+            }
             if(frame.morphTargetInfluences[0]>0){
                 frame.morphTargetInfluences[0] -= 0.01;
             }
             if(frame2.morphTargetInfluences[0]>0){
                 frame2.morphTargetInfluences[0] -= 0.01;
             }
-        }
-        else if (camera.position.y > -3){
-            camera.position.y -= speed;
-            disco.rotation.y += 0.005; 
-            if(frame3.morphTargetInfluences[0]<1){
-                frame3.morphTargetInfluences[0] += 0.01;
+        } else if (camera.position.y > YBOUND_BOTTOM){
+            camera.position.y -= speed; 
+            if (frame.morphTargetInfluences[0]<1){
+                frame.morphTargetInfluences[0] += 0.01;
             }
+            if (frame2.morphTargetInfluences[0]<1){
+                frame2.morphTargetInfluences[0] += 0.01;
+            }
+        }else{
+            disco.rotation.y += 0.5;
         }
-        else if (camera.position.z >1.5){
-            camera.position.z -= speed; 
+        }
+    else{
+        if (camera.position.z <ZBOUND_TOP && camera.position.y > YBOUND_TOP){
+            camera.position.z += speed; 
+            if (frame.morphTargetInfluences[0]>0){
+                frame.morphTargetInfluences[0] -= 0.005;
+            }
+            if (frame2.morphTargetInfluences[0]>0){
+                frame2.morphTargetInfluences[0] -= 0.005;
+            }
+           
+        }
+        else if (camera.position.y < YBOUND_TOP){
+            camera.position.y += speed; 
+            
         }
     }
 }
