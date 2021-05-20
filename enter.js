@@ -262,7 +262,7 @@ import { FilmPass } from '/threejs/examples/jsm/postprocessing/FilmPass.js';
             ev.preventDefault();
             const amount = ev.deltaY;
             if (amount<0){
-				if (camera.position.y <HIGHESTHEIGHT){
+				if (camera.position.y <HIGHESTHEIGHT && model.morphTargetInfluences[0]>0.9){
 					camera.position.y += YSPEED;
 				}
 				else if(camera.position.y > 34){
